@@ -243,7 +243,7 @@ func (api *Kraken) GetOpenPositions(docalcs bool, txIDs ...string) (map[string]P
 func (api *Kraken) GetLedgersInfo(ledgerType string, start int64, end int64, assets ...string) (LedgerInfoResponse, error) {
 	response := LedgerInfoResponse{}
 	data := url.Values{}
-	if ledgerType != "" {
+	if ledgerType == "" {
 		data.Set("type", LedgerTypeAll)
 	}
 	if start != 0 {
@@ -253,8 +253,9 @@ func (api *Kraken) GetLedgersInfo(ledgerType string, start int64, end int64, ass
 		data.Set("end", strconv.FormatInt(end, 10))
 	}
 	if len(assets) > 0 {
-		data.Set("assets", strings.Join(assets, ","))
+		data.Set("asset", strings.Join(assets, ","))
 	}
+	data.Set("without_count", "true")
 
 	if err := api.request("Ledgers", true, data, &response); err != nil {
 		return response, err
